@@ -1,2 +1,1 @@
-T~1~read book
-E~1~project meeting~at: 23/12/2019 1800
+T~0~study with avina

@@ -1,11 +1,3 @@
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.layout.VBox;
-
 import java.io.IOException;
 
 /**
@@ -17,12 +9,6 @@ public class Duke {
     private Storage storage;
     private TaskList tasks;
     private Ui ui;
-
-    private ScrollPane scrollPane;
-    private VBox dialogContainer;
-    private TextField userInput;
-    private Button sendButton;
-    private Scene scene;
 
     public Duke() {
 
@@ -45,10 +31,6 @@ public class Duke {
         try {
             String output = parser.parseCommand(input, tasks);
             storage.update(tasks);
-
-            if (parser.isExit()) {
-                return output;
-            }
 
             return output;
 

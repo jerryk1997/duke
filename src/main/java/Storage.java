@@ -92,6 +92,7 @@ public class Storage {
 
         ListIterator<Task> iter = list.listIterator();
 
+
         while (iter.hasNext()) {
             Task current = iter.next();
             sb.append(current.toFileFormat());

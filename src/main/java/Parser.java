@@ -6,7 +6,6 @@
  */
 public class Parser {
     private Ui ui;
-    private boolean isExit = false;
 
     /**
      * Constructs a Parser object.
@@ -33,6 +32,8 @@ public class Parser {
         assert input != null;
 
         String[] inputArr = input.split(" ");
+
+        //Extracting task type and description from input
         String taskType = inputArr[0];
         String taskDesc = getDesc(inputArr);
 
@@ -41,32 +42,24 @@ public class Parser {
         }
 
         if (taskType.equals("bye")) {
-            isExit = true;
+
             return ui.showGoodbye();
+
         } else if (taskType.equals("list")) {
 
             return ui.printTaskList(taskList);
 
         } else if (taskDesc.isEmpty()) {
+
             throw new NoDescriptionException(":( OOPS!!! The description of " + inputArr[0] + " cannot be empty.");
+
         } else if (taskType.equals("done")) {
 
-            int taskNum = Integer.parseInt(taskDesc);
-            Task task = taskList.getTask(taskNum);
-
-            if (task.isDone()) {
-                return ui.showTaskAlreadyDone(task);
-            } else {
-                task.doTask();
-                return ui.showTaskDone(task);
-            }
+            return doneCommand(taskDesc, taskList);
 
         } else if (taskType.equals("delete")) {
-            int taskNum = Integer.parseInt(taskDesc);
-            Task task = taskList.getTask(taskNum);
-            taskList.deleteTask(taskNum);
 
-            return ui.showTaskDeleted(task, taskList);
+            return deleteCommand(taskDesc, taskList);
 
         } else if (taskType.equals("find")) {
 
@@ -74,33 +67,67 @@ public class Parser {
 
         } else if (taskType.equals("todo")) {
 
-            Task newTodo = new Todo(taskDesc);
-            taskList.addTask(newTodo);
-
-            return ui.showTaskAdded(newTodo, taskList);
+            return todoCommand(taskDesc, taskList);
 
         } else if (taskType.equals("deadline")) {
 
-            String[] taskDescArr = taskDesc.split(" /");
-
-            Task newDeadline = new Deadline(taskDescArr[0], taskDescArr[1]);
-
-            taskList.addTask(newDeadline);
-
-            return ui.showTaskAdded(newDeadline, taskList);
+            return deadlineCommand(taskDesc, taskList);
 
         } else  if (taskType.equals("event")) {
-            String[] taskDescArr = taskDesc.split(" /");
 
-            Task newEvent = new Event(taskDescArr[0], taskDescArr[1]);
+            return eventCommand(taskDesc, taskList);
 
-            taskList.addTask(newEvent);
-
-            return ui.showTaskAdded(newEvent, taskList);
         } else {
             assert false;
             return "assert testing"; //Returning a string since method must return string
         }
+    }
+
+    private String doneCommand(String taskDesc, TaskList taskList) {
+        int taskNum = Integer.parseInt(taskDesc);
+        Task task = taskList.getTask(taskNum);
+
+        if (task.isDone()) {
+            return ui.showTaskAlreadyDone(task);
+        } else {
+            task.doTask();
+            return ui.showTaskDone(task);
+        }
+    }
+
+    private String deleteCommand(String taskDesc, TaskList taskList) {
+        int taskNum = Integer.parseInt(taskDesc);
+        Task task = taskList.getTask(taskNum);
+        taskList.deleteTask(taskNum);
+
+        return ui.showTaskDeleted(task, taskList);
+    }
+
+    private String todoCommand(String taskDesc, TaskList taskList) {
+        Task newTodo = new Todo(taskDesc);
+        taskList.addTask(newTodo);
+
+        return ui.showTaskAdded(newTodo, taskList);
+    }
+
+    private String deadlineCommand(String taskDesc, TaskList taskList) {
+        String[] taskDescArr = taskDesc.split(" /");
+
+        Task newDeadline = new Deadline(taskDescArr[0], taskDescArr[1]);
+
+        taskList.addTask(newDeadline);
+
+        return ui.showTaskAdded(newDeadline, taskList);
+    }
+
+    private String eventCommand(String taskDesc, TaskList taskList) {
+        String[] taskDescArr = taskDesc.split(" /");
+
+        Task newEvent = new Event(taskDescArr[0], taskDescArr[1]);
+
+        taskList.addTask(newEvent);
+
+        return ui.showTaskAdded(newEvent, taskList);
     }
 
     /**
@@ -125,21 +152,13 @@ public class Parser {
     }
 
     public static boolean correctInput(String input) {
-        if (input.equals("todo") ||
+        return input.equals("todo") ||
                 input.equals("event") ||
                 input.equals("deadline") ||
                 input.equals("list") ||
                 input.equals("done") ||
                 input.equals("bye") ||
                 input.equals("delete") ||
-                input.equals("find")) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean isExit() {
-        return isExit;
+                input.equals("find");
     }
 }
